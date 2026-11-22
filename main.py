@@ -1,20 +1,26 @@
 #!/usr/bin/env python3
-"""Entrypoint for the make.fun news-image-20261122 bounty.
+"""Entrypoint: drop the finished poster into the make.fun output folder.
 
-Standard library only. Copies the bundled entry.png byte for byte to
-$MAKEFUN_OUTPUT_DIR/entry.png (default /output/entry.png). No network,
-no clock, no randomness, so two runs always write identical bytes.
+The build step (build_image.py) renders entry.png next to this file.
+This script only moves those bytes to $MAKEFUN_OUTPUT_DIR/entry.png,
+creating the folder if needed. Standard library only.
+
+Run: MAKEFUN_OUTPUT_DIR=/output python3 main.py
 """
 import os
 import shutil
+import sys
 
 
 def main():
-    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
+    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "")
+    if not out_dir:
+        sys.exit("MAKEFUN_OUTPUT_DIR is not set")
     here = os.path.dirname(os.path.abspath(__file__))
     src = os.path.join(here, "entry.png")
     os.makedirs(out_dir, exist_ok=True)
     shutil.copyfile(src, os.path.join(out_dir, "entry.png"))
+    print("copied", src, "->", os.path.join(out_dir, "entry.png"))
 
 
 if __name__ == "__main__":
